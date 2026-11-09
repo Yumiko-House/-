@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ColdGuard Gauge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header><h2>ColdGuard</h2></header>
+
+<main>
+    <h2>Gauge - room01</h2>
+    <div class="card">
+        <canvas id="gauge"></canvas>
+        <p>ช่วงอุณหภูมิปกติ 15–30 °C</p>
+        <h3 id="temp"></h3>
+    </div>
+</main>
+
+<script>
+async function loadGauge() {
+    const res = await fetch("/api/readings?room=room01&from=&to=");
+    const data = await res.json();
+    const item = data[data.length - 1];
+
+    document.getElementById("temp").innerText =
+        "อุณหภูมิ " + item.temp + " °C";
+
+    new Chart(document.getElementById("gauge"), {
+        type: "doughnut",
+        data: {
+            labels: ["อุณหภูมิ", "ส่วนที่เหลือ"],
+            datasets: [{
+                data: [item.temp, 40 - item.temp],
+                backgroundColor: ["#2386c8", "#e5edf4"]
+            }]
+        },
+        options: {
+            circumference: 180,
+            rotation: 270,
+            cutout: "70%"
+        }
+    });
+}
+
+loadGauge();
+</script>
+
+</body>
+</html>
