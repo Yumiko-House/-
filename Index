@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColdGuard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header>
+    <h2>ColdGuard</h2>
+    <span>ระบบเฝ้าระวังอุณหภูมิห้องเก็บยา</span>
+</header>
+
+<nav>
+    <a href="live.html">Live</a>
+    <a href="gauge.html">Gauge</a>
+    <a href="trend.html">Trend</a>
+    <a href="incidents.html">Incidents</a>
+    <a href="heatmap.html">Heatmap</a>
+</nav>
+
+<main id="content">
+    <h2>ColdGuard Dashboard</h2>
+</main>
+
+</body>
+</html>
