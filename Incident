@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ColdGuard Incidents</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header><h2>ColdGuard</h2></header>
+
+<main>
+    <h2>Incidents - 7 Days</h2>
+
+    <div class="card">
+        <canvas id="incidentChart"></canvas>
+    </div>
+</main>
+
+<script>
+async function loadIncidents() {
+    const res = await fetch("/api/incidents?status=&page=1");
+    const data = await res.json();
+
+    const rooms = [...new Set(data.map(x => x.room))];
+
+    const counts = rooms.map(room =>
+        data.filter(x => x.room === room).length
+    );
+
+    new Chart(document.getElementById("incidentChart"), {
+        type: "bar",
+        data: {
+            labels: rooms,
+            datasets: [{
+                label: "จำนวนเหตุการณ์",
+                data: counts,
+                backgroundColor: "#2386c8"
+            }]
+        }
+    });
+}
+
+loadIncidents();
+</script>
+
+</body>
+</html>
