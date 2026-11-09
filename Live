@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ColdGuard Live</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h2>ColdGuard</h2>
+    <p>สถานะอุณหภูมิรายห้อง</p>
+</header>
+
+<main>
+    <h2>Live Dashboard</h2>
+    <div id="rooms"></div>
+</main>
+
+<script>
+async function loadData() {
+    const response = await fetch("/api/readings?room=&from=&to=");
+    const data = await response.json();
+
+    const latest = {};
+    data.forEach(item => latest[item.room] = item);
+
+    document.getElementById("rooms").innerHTML =
+        Object.values(latest).map(item => {
+            const bad = item.temp < 15 || item.temp > 30;
+
+            return `
+                <div class="card">
+                    <h3>${item.room}</h3>
+                    <h2 class="${bad ? 'abnormal' : 'normal'}">
+                        ${item.temp} °C
+                    </h2>
+                    <p>${bad ? "ผิดปกติ" : "ปกติ"}</p>
+                </div>
+            `;
+        }).join("");
+}
+
+loadData();
+setInterval(loadData, 5000);
+</script>
+
+</body>
+</html>
