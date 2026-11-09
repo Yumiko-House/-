@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ColdGuard Heatmap</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header><h2>ColdGuard</h2></header>
+
+<main>
+    <h2>Temperature Heatmap</h2>
+    <div id="heatmap" class="card"></div>
+</main>
+
+<script>
+async function loadHeatmap() {
+    const res = await fetch("/api/readings?room=&from=&to=");
+    const data = await res.json();
+
+    const days = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"];
+    let html = "<table><tr><th>วัน/เวลา</th>";
+
+    for (let h = 0; h < 24; h++) {
+        html += `<th>${h}</th>`;
+    }
+
+    html += "</tr>";
+
+    for (let d = 0; d < 7; d++) {
+        html += `<tr><th>${days[d]}</th>`;
+
+        for (let h = 0; h < 24; h++) {
+            const values = data.filter(x => {
+                const date = new Date(x.measured_at);
+                return date.getDay() === d && date.getHours() === h;
+            }).map(x => Number(x.temp));
+
+            const avg = values.length
+                ? values.reduce((a,b) => a+b,0) / values.length
+                : null;
+
+            const color = avg === null ? "#eeeeee" :
+                avg < 15 || avg > 30 ? "#e74c3c" : "#58b889";
+
+            html += `<td style="background:${color}" title="${avg === null ? "ไม่มีข้อมูล" : avg.toFixed(1)+" °C"}"></td>`;
+        }
+
+        html += "</tr>";
+    }
+
+    html += "</table>";
+    document.getElementById("heatmap").innerHTML = html;
+}
+
+loadHeatmap();
+</script>
+
+</body>
+</html>
