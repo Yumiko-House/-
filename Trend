@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ColdGuard Trend</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header><h2>ColdGuard</h2></header>
+
+<main>
+    <h2>Temperature Trend</h2>
+
+    <select id="hours" onchange="loadTrend()">
+        <option value="1">1 ชั่วโมง</option>
+        <option value="6">6 ชั่วโมง</option>
+        <option value="24">24 ชั่วโมง</option>
+    </select>
+
+    <div class="card">
+        <canvas id="trend"></canvas>
+    </div>
+</main>
+
+<script>
+let chart;
+
+async function loadTrend() {
+    const hours = document.getElementById("hours").value;
+
+    const to = new Date();
+    const from = new Date(to - hours * 3600000);
+
+    const url = `/api/readings?room=room01&from=${from.toISOString()}&to=${to.toISOString()}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(document.getElementById("trend"), {
+        type: "line",
+        data: {
+            labels: data.map(x =>
+                new Date(x.measured_at).toLocaleTimeString()
+            ),
+            datasets: [{
+                label: "อุณหภูมิ °C",
+                data: data.map(x => x.temp),
+                borderColor: "blue",
+                tension: 0.3
+            }]
+        }
+    });
+}
+
+loadTrend();
+</script>
+
+</body>
+</html>
